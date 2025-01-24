@@ -1,8 +1,12 @@
 <template>
   <div id="app">
-    <el-button type="primary" size="small" @click="handleValidate"
-      >校验</el-button
+    <el-switch
+      v-model="enable"
+      active-text="enable"
+      inactive-text="disable"
+      @change="handleEnable"
     >
+    </el-switch>
     <EVirtTableVue
       @ready="onReady"
       @selectionChange="selectionChange"
@@ -35,7 +39,7 @@
 import { faker } from "@faker-js/faker";
 import EVirtTableVue from "./components/EVirtTableVue";
 import dayjs from "dayjs";
-import weekOfYear from 'dayjs/plugin/weekOfYear' // ES 2015
+import weekOfYear from "dayjs/plugin/weekOfYear"; // ES 2015
 dayjs.extend(weekOfYear);
 
 export default {
@@ -45,10 +49,9 @@ export default {
   data() {
     return {
       loading: false,
-      selectValue: "",
+      enable: true,
       grid: null,
       tableData: [],
-      selectList: [],
       columns: [
         // {
         //     title: '序号',
@@ -305,21 +308,14 @@ export default {
     selectionChange(list) {
       console.log(list);
     },
-    async handleValidate() {
-      try {
-        await this.grid.validate();
-      } catch (error) {
-        console.error(error);
-      }
+    handleEnable(value) {
+      this.grid?.loadConfig({
+        ...this.config,
+        DISABLED: !value,
+      });
     },
     onReady(grid) {
       this.grid = grid;
-    },
-    addData() {
-      this.tableData.push({
-        sex: 1,
-      });
-      this.grid.loadData(this.tableData);
     },
   },
 };
