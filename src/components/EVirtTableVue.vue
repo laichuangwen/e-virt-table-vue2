@@ -15,6 +15,7 @@
       <el-date-picker
         v-if="editorType === 'date'"
         class="d-evirt-table-editor-date"
+        popper-class="d-evirt-table-editor-popper"
         :style="popupStyle"
         ref="dateRef"
         v-model="dateValue"
@@ -24,6 +25,7 @@
       <el-time-picker
         v-if="editorType === 'time'"
         class="d-evirt-table-editor-time"
+        popper-class="d-evirt-table-editor-popper"
         :style="popupStyle"
         ref="timeRef"
         v-model="timeValue"
@@ -34,6 +36,7 @@
         v-if="editorType === 'select'"
         ref="selectRef"
         class="d-evirt-table-editor-select"
+        popper-class="d-evirt-table-editor-popper"
         :style="popupStyle"
         v-model="selectValue"
         @change="saveCellValue"
@@ -52,6 +55,7 @@
         v-if="editorType === 'cascader'"
         ref="cascaderRef"
         class="d-evirt-table-editor-cascader"
+        popper-class="d-evirt-table-editor-popper"
         :style="popupStyle"
         v-model="cascaderValue"
         @change="saveCellValue"
@@ -336,6 +340,16 @@ export default {
         });
         this.grid.on("doneEdit", () => {
           this.editorType = "text";
+        });
+        this.grid.on("outsideMousedown", (e) => {
+          const ancestor =
+            e.target instanceof Node &&
+            e.target.closest(".d-evirt-table-editor-popper");
+          if (ancestor) {
+            return;
+          }
+          // 说明点到容器外部了
+          this.grid?.clearEditor();
         });
         this.grid.on("overlayerChange", (overlayer) => {
           this.overlayerView = overlayer;
